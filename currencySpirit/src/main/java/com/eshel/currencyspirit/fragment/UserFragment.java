@@ -1,19 +1,21 @@
 package com.eshel.currencyspirit.fragment;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Toast;
 
 import com.eshel.currencyspirit.R;
 import com.eshel.currencyspirit.activity.EssenceHistoryActivity;
+import com.eshel.currencyspirit.activity.HomeActivity;
 import com.eshel.currencyspirit.widget.OptionItemView;
 import com.eshel.currencyspirit.widget.OverScrollView;
 
 import baseproject.base.BaseFragment;
+import baseproject.util.DensityUtil;
 import butterknife.BindView;
 import butterknife.ButterKnife;
 import butterknife.Unbinder;
@@ -37,7 +39,6 @@ public class UserFragment extends BaseFragment {
 				changeState(LoadState.StateLoadSuccess);
 			}
 		}, 100);
-		unbinder = ButterKnife.bind(this, super.onCreateView(inflater, container, savedInstanceState));
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
@@ -45,7 +46,7 @@ public class UserFragment extends BaseFragment {
 	public View getLoadSuccessView() {
 		View root = View.inflate(getActivity(), R.layout.fragment_user, null);
 		mSuccessViewHolder = new SuccessViewHolder();
-		ButterKnife.bind(mSuccessViewHolder,root);
+		unbinder = ButterKnife.bind(mSuccessViewHolder,root);
 		mSuccessViewHolder.itemHistory.setOnClickListener(new View.OnClickListener() {
 			@Override
 			public void onClick(View v) {
@@ -97,5 +98,13 @@ public class UserFragment extends BaseFragment {
 		OptionItemView itemOption;
 		@BindView(R.id.OverScroller)
 		OverScrollView OverScroller;
+	}
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			HomeActivity homeActivity = (HomeActivity) getActivity();
+			homeActivity.getTitle2().setElevation(DensityUtil.dp2px(HomeActivity.titleElevation/2));
+		}
 	}
 }

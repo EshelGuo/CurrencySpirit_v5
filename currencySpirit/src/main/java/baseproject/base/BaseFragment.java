@@ -46,6 +46,8 @@ public abstract class BaseFragment extends Fragment{
 			stateChanged = null;
 			changeState(tempState);
 		}
+		if(mState != null)
+			changeState(mState);
 		return mControl;
 	}
 
@@ -76,7 +78,7 @@ public abstract class BaseFragment extends Fragment{
 		if(layoutParams != null){
 			layoutParams.width = width;
 			layoutParams.height = width;
-		}else {
+		} else {
 			layoutParams = new ViewGroup.LayoutParams(width,width);
 		}
 		view.setLayoutParams(layoutParams);

@@ -41,7 +41,6 @@ import xgpush.XGMsage;
  */
 
 public class HomeActivity extends BaseActivity {
-
 	@BindView(R.id.bottomBar)
 	BottomBar bottomBar;
 	@BindView(R.id.vp_main)
@@ -54,6 +53,10 @@ public class HomeActivity extends BaseActivity {
 	View topCutOffLine;
 	@BindView(R.id.cut_off_line)
 	View cutOffLine;
+	public View getTitle2(){
+		return toolbar;
+	}
+
 	private MainPagerAdapter mMainPagerAdapter;
 	private int fragmentSize = 4;
 
@@ -105,6 +108,7 @@ public class HomeActivity extends BaseActivity {
 	private void initViewPager() {
 		mMainPagerAdapter = new MainPagerAdapter(getSupportFragmentManager());
 		vpMain.setAdapter(mMainPagerAdapter);
+		vpMain.setOffscreenPageLimit(1);
 	}
 
 	private BottomBarTab nearby;

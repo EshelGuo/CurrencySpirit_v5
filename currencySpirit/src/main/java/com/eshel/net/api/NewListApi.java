@@ -3,7 +3,6 @@ package com.eshel.net.api;
 import okhttp3.ResponseBody;
 import retrofit2.Call;
 import retrofit2.http.GET;
-import retrofit2.http.Headers;
 import retrofit2.http.Query;
 
 /**
@@ -12,7 +11,7 @@ import retrofit2.http.Query;
  * desc: 新闻类别网络请求
  * https://fengzhihen.com/btcapp/newsInfo?start=1&count=20    // 精华专栏
  * https://fengzhihen.com/btcapp/weiboInfo?start=1&count=20    // 微博专栏
- * https://fengzhihen.com/btcapp/coinInfo?start=1&count=20    // 牛币专栏
+ * https://fengzhihen.com/btcapp/coinInfo?start=1&count=20 &sort=volume&desc=false&symbol=USD   // 牛币专栏
  */
 
 public interface NewListApi {
@@ -24,5 +23,10 @@ public interface NewListApi {
 	Call<ResponseBody> information(@Query("start") int start,@Query("count")int count);
 //	@Headers("Cache-Control: public, max-age=3600")
 	@GET("coinInfo")
-	Call<ResponseBody> coinInfo(@Query("start") int start,@Query("count")int count);
+	Call<ResponseBody> coinInfo(
+			@Query("start") int start,
+			@Query("count")int count,
+			@Query("sort") String sort,// "volume" 市值排序 "percent" //涨幅排序
+			@Query("desc") boolean desc,// true 升序 false 降序
+			@Query("symbol") String symbol);// USD 美元
 }

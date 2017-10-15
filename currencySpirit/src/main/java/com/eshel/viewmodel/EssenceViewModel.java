@@ -6,6 +6,7 @@ import com.eshel.database.table.EssenceHistory;
 import com.eshel.model.EssenceModel;
 import com.eshel.net.api.NewListApi;
 import com.eshel.net.factory.RetrofitFactory;
+import com.eshel.viewmodel.BaseViewModel.Mode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -97,7 +98,7 @@ public class EssenceViewModel {
 		start += count;
 		long refreshTime;
 		if(mode == Mode.REFRESH){
-			refreshTime = EssenceViewModel.refreshTime - getTimeDifference(ago);
+			refreshTime = EssenceViewModel.refreshTime - BaseViewModel.getTimeDifference(ago);
 			if(refreshTime < 0)
 				refreshTime = 0;
 		}else {
@@ -118,10 +119,6 @@ public class EssenceViewModel {
 		},refreshTime);
 	}
 
-	static long getTimeDifference(long ago){
-		long afterTime = System.currentTimeMillis();
-		return afterTime - ago;
-	}
 	public static void refreshData(){
 		start = 0;
 		getEssenceData(Mode.REFRESH);
@@ -133,8 +130,5 @@ public class EssenceViewModel {
 		else {
 			EssenceHistoryDao.update(model);
 		}
-	}
-	public enum Mode{
-		NORMAL,REFRESH,LOADMORE;
 	}
 }

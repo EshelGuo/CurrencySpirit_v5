@@ -8,7 +8,8 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-sdk tools:overrideLibrary="com.lc.xinge,
                                      lc.com.wup,com.qq.mid,
-                                     me.weyye.hipermission"/>
+                                     me.weyye.hipermission
+                                     ,com.ogaclejapan.smarttablayout.utils"/>
     <application
         android:name=".CurrencySpiritApp"
         android:allowBackup="true"

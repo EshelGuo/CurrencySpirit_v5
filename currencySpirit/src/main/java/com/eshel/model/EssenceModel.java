@@ -4,7 +4,7 @@ import com.eshel.currencyspirit.activity.EssenceHistoryActivity;
 import com.eshel.currencyspirit.factory.FragmentFactory;
 import com.eshel.currencyspirit.fragment.EssenceFragment;
 import com.eshel.database.table.EssenceHistory;
-import com.eshel.viewmodel.EssenceViewModel;
+import com.eshel.viewmodel.BaseViewModel.Mode;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -12,7 +12,6 @@ import java.util.List;
 
 import baseproject.base.BaseActivity;
 import baseproject.base.BaseFragment;
-
 /**
  * createBy Eshel
  * createTime: 2017/10/5 03:29
@@ -60,7 +59,7 @@ public class EssenceModel implements Serializable{
 		}
 		return transitionData;
 	}
-	public static void notifyView(EssenceViewModel.Mode mode , boolean isSuccess){
+	public static void notifyView(Mode mode , boolean isSuccess){
 		BaseFragment essenceFragment = (BaseFragment) FragmentFactory.getFragment(EssenceFragment.class);
 		if(isSuccess) {
 			if (essenceFragment.getCurrState() != BaseFragment.LoadState.StateLoadSuccess)
@@ -69,9 +68,9 @@ public class EssenceModel implements Serializable{
 				essenceFragment.notifyView();
 			}
 		}else {
-			if(mode == EssenceViewModel.Mode.NORMAL)
+			if(mode == Mode.NORMAL)
 				essenceFragment.changeState(BaseFragment.LoadState.StateLoadFailed);
-			else if(mode == EssenceViewModel.Mode.REFRESH){
+			else if(mode == Mode.REFRESH){
 				essenceFragment.refreshFailed();
 			}else {
 				essenceFragment.loadModeFailed();

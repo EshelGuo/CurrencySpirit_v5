@@ -2,9 +2,9 @@ package com.eshel.viewmodel;
 
 import com.eshel.currencyspirit.CurrencySpiritApp;
 import com.eshel.model.InformationModel;
-import com.eshel.model.InformationModel;
 import com.eshel.net.api.NewListApi;
 import com.eshel.net.factory.RetrofitFactory;
+import com.eshel.viewmodel.BaseViewModel.Mode;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
@@ -26,7 +26,7 @@ public class InformationViewModel {
 	static int count = 20;
 
 	static long refreshTime = 2000;
-	public static void getInformationData(final InformationViewModel.Mode mode ){
+	public static void getInformationData(final Mode mode ){
 		final long ago = System.currentTimeMillis();
 		NewListApi newListApi = RetrofitFactory.getRetrofit().create(NewListApi.class);
 		Call<ResponseBody> information = newListApi.information(start, count);
@@ -41,7 +41,7 @@ public class InformationViewModel {
 								gson.fromJson(json, new TypeToken<ArrayList<InformationModel>>() {}.getType());
 						start += count;
 						long refreshTime;
-						if(mode == InformationViewModel.Mode.REFRESH){
+						if(mode == Mode.REFRESH){
 							refreshTime = InformationViewModel.refreshTime - getTimeDifference(ago);
 							if(refreshTime < 0)
 								refreshTime = 0;
@@ -51,7 +51,7 @@ public class InformationViewModel {
 						CurrencySpiritApp.getApp().getHandler().postDelayed(new Runnable() {
 							@Override
 							public void run() {
-								if(mode == InformationViewModel.Mode.REFRESH)
+								if(mode == Mode.REFRESH)
 									InformationModel.informationData.clear();
 								else {
 									start += count;
@@ -91,9 +91,6 @@ public class InformationViewModel {
 	}
 	public static void refreshData(){
 		start = 0;
-		getInformationData(InformationViewModel.Mode.REFRESH);
-	}
-	public enum Mode{
-		NORMAL,REFRESH,LOADMORE;
+		getInformationData(Mode.REFRESH);
 	}
 }

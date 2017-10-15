@@ -57,7 +57,7 @@ public class CurrencySpiritApp extends BaseApplication{
 			public void onFail(Object data, int errCode, String msg) {
 				registerSuccess = false;
 				Log.i("TPush", "注册失败，错误码：" + errCode + ",错误信息：" + msg);
-				getHandler().postDelayed(new Runnable() {
+/*				getHandler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
 						if(!registerSuccess){
@@ -65,7 +65,7 @@ public class CurrencySpiritApp extends BaseApplication{
 							mainOnCreate();
 						}
 					}
-				},2000);
+				},2000);*/
 			}
 		});
 		getHandler().postDelayed(new Runnable() {

@@ -1,6 +1,7 @@
 package baseproject.util;
 
 import java.lang.reflect.Field;
+import java.text.NumberFormat;
 import java.util.LinkedHashMap;
 import java.util.Map;
 
@@ -16,5 +17,20 @@ public class DataUtil {
 		Field tail = map.getClass().getDeclaredField("tail");
 		tail.setAccessible(true);
 		return (Map.Entry<K, V>) tail.get(map);
+	}
+
+	/**
+	 *
+	 * @param d
+	 * @param useSeparator false "999999" true "999,999"
+	 * @return
+	 */
+	public static String double2Str(Double d,boolean useSeparator) {
+		if (d == null) {
+			return "";
+		}
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setGroupingUsed(useSeparator);
+		return (nf.format(d));
 	}
 }

@@ -1,6 +1,7 @@
 package com.eshel.currencyspirit.fragment;
 
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -15,6 +16,7 @@ import android.widget.TextView;
 import com.bumptech.glide.Glide;
 import com.eshel.currencyspirit.CurrencySpiritApp;
 import com.eshel.currencyspirit.R;
+import com.eshel.currencyspirit.activity.HomeActivity;
 import com.eshel.currencyspirit.activity.WeiboDetailsActivity;
 import com.eshel.currencyspirit.util.UIUtil;
 import com.eshel.currencyspirit.widget.RecycleViewDivider;
@@ -22,6 +24,7 @@ import com.eshel.currencyspirit.widget.util.Config;
 import com.eshel.currencyspirit.widget.util.GlideCircleTransform;
 import com.eshel.currencyspirit.widget.util.LoadMoreView;
 import com.eshel.model.InformationModel;
+import com.eshel.viewmodel.BaseViewModel;
 import com.eshel.viewmodel.InformationViewModel;
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 
@@ -46,12 +49,12 @@ public class InformationFragment extends BaseFragment {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		InformationViewModel.getInformationData(InformationViewModel.Mode.NORMAL);
+		InformationViewModel.getInformationData(BaseViewModel.Mode.NORMAL);
 	}
 
 	@Override
 	protected void reloadData() {
-		InformationViewModel.getInformationData(InformationViewModel.Mode.NORMAL);
+		InformationViewModel.getInformationData(BaseViewModel.Mode.NORMAL);
 	}
 
 	@Override
@@ -77,7 +80,7 @@ public class InformationFragment extends BaseFragment {
 			@Override
 			public void onLoadMoreItems() {
 				// todo do loadmore here
-				InformationViewModel.getInformationData(InformationViewModel.Mode.LOADMORE);
+				InformationViewModel.getInformationData(BaseViewModel.Mode.LOADMORE);
 			}
 		});
 
@@ -202,6 +205,15 @@ public class InformationFragment extends BaseFragment {
 					startActivity(intent);
 				}
 			});
+		}
+
+	}
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			HomeActivity homeActivity = (HomeActivity) getActivity();
+			homeActivity.getTitle2().setElevation(DensityUtil.dp2px(HomeActivity.titleElevation/2));
 		}
 	}
 }

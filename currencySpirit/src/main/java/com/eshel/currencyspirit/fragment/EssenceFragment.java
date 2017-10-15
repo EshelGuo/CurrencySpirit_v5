@@ -18,12 +18,14 @@ import com.bumptech.glide.Glide;
 import com.eshel.currencyspirit.CurrencySpiritApp;
 import com.eshel.currencyspirit.R;
 import com.eshel.currencyspirit.activity.EssenceDetailsActivity;
+import com.eshel.currencyspirit.activity.HomeActivity;
 import com.eshel.currencyspirit.util.UIUtil;
 import com.eshel.currencyspirit.widget.RecycleViewDivider;
 import com.eshel.currencyspirit.widget.util.Config;
 import com.eshel.currencyspirit.widget.util.GlideRoundedRectangleTransform;
 import com.eshel.currencyspirit.widget.util.LoadMoreView;
 import com.eshel.model.EssenceModel;
+import com.eshel.viewmodel.BaseViewModel;
 import com.eshel.viewmodel.EssenceViewModel;
 import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 
@@ -37,6 +39,8 @@ import baseproject.util.DensityUtil;
 import baseproject.util.StringUtils;
 import butterknife.BindView;
 import butterknife.ButterKnife;
+
+import static com.eshel.currencyspirit.activity.HomeActivity.titleElevation;
 
 /**
  * createBy Eshel
@@ -52,12 +56,12 @@ public class EssenceFragment extends BaseFragment {
 	@Override
 	public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-		EssenceViewModel.getEssenceData(EssenceViewModel.Mode.NORMAL);
+		EssenceViewModel.getEssenceData(BaseViewModel.Mode.NORMAL);
 	}
 
 	@Override
 	protected void reloadData() {
-		EssenceViewModel.getEssenceData(EssenceViewModel.Mode.NORMAL);
+		EssenceViewModel.getEssenceData(BaseViewModel.Mode.NORMAL);
 	}
 
 	@Override
@@ -83,7 +87,7 @@ public class EssenceFragment extends BaseFragment {
 			@Override
 			public void onLoadMoreItems() {
 				// todo do loadmore here
-				EssenceViewModel.getEssenceData(EssenceViewModel.Mode.LOADMORE);
+				EssenceViewModel.getEssenceData(BaseViewModel.Mode.LOADMORE);
 			}
 		});
 
@@ -225,6 +229,15 @@ public class EssenceFragment extends BaseFragment {
 			}else {
 				title.setTextColor(UIUtil.getColor(android.R.color.black));
 			}
+		}
+	}
+
+	@Override
+	public void onResume() {
+		super.onResume();
+		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+			HomeActivity homeActivity = (HomeActivity) getActivity();
+			homeActivity.getTitle2().setElevation(DensityUtil.dp2px(HomeActivity.titleElevation/2));
 		}
 	}
 }
