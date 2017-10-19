@@ -4,8 +4,12 @@
           package="com.eshel.currencyspirit">
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_TASKS"/>
+    <uses-permission android:name="android.permission.READ_PHONE_STATE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.WRITE_SETTINGS"/>
     <uses-sdk tools:overrideLibrary="com.lc.xinge,
                                      lc.com.wup,com.qq.mid,
                                      me.weyye.hipermission
@@ -35,12 +39,18 @@
             android:name=".activity.EssenceDetailsActivity"/>
         <activity
             android:exported="true"
+            android:name=".activity.CurrencyDetailsActivity"/>
+        <activity
+            android:exported="true"
             android:name=".activity.EssenceHistoryActivity"/>
         <activity
             android:exported="true"
             android:name=".activity.WeiboDetailsActivity"/>
         <activity android:name=".activity.AboutActivity"/>
         <activity android:name=".activity.OptionActivity"/>
+        <activity
+            android:windowSoftInputMode="stateVisible|adjustResize"
+            android:name=".activity.SearchCurrencyActivity"/>
         <!--信鸽推送-->
         <receiver android:name="xgpush.receiver.XGMessageReceiver"
                   android:exported="true">
@@ -51,6 +61,12 @@
                 <action android:name="com.tencent.android.tpush.action.FEEDBACK" />
             </intent-filter>
         </receiver>
+        <provider
+            android:name="com.tencent.mid.api.MidProvider"
+            android:authorities="com.eshel.currencyspirit.TENCENT.MID.V3"
+            android:exported="true" >
+        </provider>
+        <meta-data android:name="TA_APPKEY" android:value="3102570311"/>
+        <meta-data android:name="InstallChannel" android:value="${InstallChannel}"/>
     </application>
-
 </manifest>

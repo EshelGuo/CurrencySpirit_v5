@@ -1,9 +1,12 @@
 package baseproject.base;
 
+import android.content.pm.ActivityInfo;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.AppCompatActivity;
+
+import com.tencent.stat.StatService;
 
 import java.util.LinkedHashMap;
 import java.util.Map;
@@ -28,6 +31,7 @@ public class BaseActivity extends AppCompatActivity {
 	@Override
 	protected void onCreate(@Nullable Bundle savedInstanceState) {
 		TAG = getClass().getSimpleName();
+		setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_PORTRAIT);
 		super.onCreate(savedInstanceState);
 		activitys.put(getClass(),this);
 	}
@@ -45,6 +49,7 @@ public class BaseActivity extends AppCompatActivity {
 			Log.i("curentTopActivity: "+topActivity);
 		else
 			Log.i("curentTopActivity: null");
+		StatService.onResume(this);
 	}
 
 	@Override
@@ -55,6 +60,7 @@ public class BaseActivity extends AppCompatActivity {
 			Log.i("curentTopActivity: "+topActivity);
 		else
 			Log.i("curentTopActivity: null");
+		StatService.onPause(this);
 	}
 
 	@Override

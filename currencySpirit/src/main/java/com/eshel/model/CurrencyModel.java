@@ -1,12 +1,18 @@
 package com.eshel.model;
 
+import com.eshel.currencyspirit.CurrencySpiritApp;
+import com.eshel.currencyspirit.R;
+import com.eshel.currencyspirit.activity.CurrencyDetailsActivity;
 import com.eshel.currencyspirit.factory.FragmentFactory;
-import com.eshel.currencyspirit.fragment.currency.MarketValueFragment;
+import com.eshel.currencyspirit.fragment.currency.SelfSelectFragment;
+import com.eshel.currencyspirit.util.UIUtil;
 import com.eshel.viewmodel.BaseViewModel;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import baseproject.base.BaseActivity;
 import baseproject.base.BaseFragment;
 import baseproject.util.DataUtil;
 
@@ -16,50 +22,19 @@ import baseproject.util.DataUtil;
  * desc: TODO
  */
 
-public class CurrencyModel {
-	public static String moneyFormat(String pre,double turnnumber){
-		//9820880109.0
-		/*StringBuilder sb = new StringBuilder();
-		String turnnumberS = String.valueOf(turnnumber);
-		int index = turnnumberS.indexOf(".");
-		if(index != -1)
-			sb.append(turnnumberS.substring(index,turnnumberS.length()));
-		int startIndex;
-		while((startIndex = index - 3) > 0){
-			sb.insert(0,","+turnnumberS.substring(startIndex,index));
-			index = startIndex;
-		}
-		sb.insert(0,turnnumberS.substring(0,index));
-		sb.insert(0,pre);*/
-//		return sb.toString();
-		return pre + DataUtil.double2Str(turnnumber,true);
+public class CurrencyModel implements Serializable {
+	public static boolean isRefreshed = false;
+	public static String moneyFormat(String pre, double turnnumber) {
+		return pre + DataUtil.double2Str(turnnumber, true);
 	}
 
-	public static class MarketValueModel{
-		public static List<CurrencyModel> marketValueData = new ArrayList<>();
-		public static int loadDataCount = 20;
-		public static CurrencyModel getMarketValueDataByPosition(int position){
-			return marketValueData.get(position);
-		}
-		public static void notifyView(BaseViewModel.Mode mode , boolean isSuccess){
-			BaseFragment marketValueFragment = (BaseFragment) FragmentFactory.getFragment(MarketValueFragment.class);
-			if(isSuccess) {
-				if (marketValueFragment.getCurrState() != BaseFragment.LoadState.StateLoadSuccess)
-					marketValueFragment.changeState(BaseFragment.LoadState.StateLoadSuccess);
-				else {
-					marketValueFragment.notifyView();
-				}
-			}else {
-				if(mode == BaseViewModel.Mode.NORMAL)
-					marketValueFragment.changeState(BaseFragment.LoadState.StateLoadFailed);
-				else if(mode == BaseViewModel.Mode.REFRESH){
-					marketValueFragment.refreshFailed();
-				}else {
-					marketValueFragment.loadModeFailed();
-				}
-			}
-		}
-	}
+	public static BaseModel martetValueModel = new BaseModel();
+	public static BaseModel selfSelectModel = new BaseModel();
+	// true 升序
+	public static BaseModel aoiModel = new BaseModel();
+	// false 降序
+	public static BaseModel aoiModel2 = new BaseModel();
+
 
 	/**
 	 * chinesename : Ethereum
@@ -96,7 +71,7 @@ public class CurrencyModel {
 	public String url;
 	public String yprice;
 
-	public static class InfoBean {
+	public static class InfoBean implements Serializable {
 		/**
 		 * chinesename : Ethereum
 		 * englishname : Ethereum
@@ -109,5 +84,62 @@ public class CurrencyModel {
 		public String symbol;
 	}
 
-	public static void notifyMarketValueView(){}
+	public static class BaseModel {
+		public List<CurrencyModel> data = new ArrayList<>();
+		public int loadDataCount = 20;
+
+		public CurrencyModel getDataByPosition(int position) {
+			return data.get(position);
+		}
+
+		public static void notifyView(final BaseViewModel.Mode mode, final boolean isSuccess, final Class FragmentClass) {
+			CurrencySpiritApp.getApp().getHandler().post(new Runnable() {
+				@Override
+				public void run() {
+					BaseFragment baseFragment = (BaseFragment) FragmentFactory.getFragment(FragmentClass);
+					if (isSuccess) {
+						if (baseFragment.getCurrState() != BaseFragment.LoadState.StateLoadSuccess)
+							baseFragment.changeState(BaseFragment.LoadState.StateLoadSuccess);
+						else {
+							baseFragment.notifyView();
+						}
+					} else {
+						if (mode == BaseViewModel.Mode.NORMAL)
+							baseFragment.changeState(BaseFragment.LoadState.StateLoadFailed);
+						else if (mode == BaseViewModel.Mode.REFRESH) {
+							baseFragment.refreshFailed();
+						} else {
+							baseFragment.loadModeFailed();
+						}
+					}
+				}
+			});
+		}
+	}
+
+	// TODO: 2017/10/17
+	public static void attentionFailed(boolean isAttention, String msg) {
+		UIUtil.toast(msg);
+		BaseActivity topActivity = BaseActivity.getTopActivity();
+		if (topActivity instanceof CurrencyDetailsActivity) {
+			CurrencyDetailsActivity currencyDetailsActivity = (CurrencyDetailsActivity) topActivity;
+			currencyDetailsActivity.attentionOver(isAttention, msg);
+		}
+	}
+
+	public static void attentionSuccess(boolean isAttention) {
+		UIUtil.toast(UIUtil.getString(isAttention ? R.string.attention_success : R.string.unattention_success));
+		BaseActivity topActivity = BaseActivity.getTopActivity();
+		if(SelfSelectFragment.isOnResume){
+			SelfSelectFragment fragment = (SelfSelectFragment) FragmentFactory.getFragment(SelfSelectFragment.class);
+			if(fragment != null)
+				fragment.refreshData();
+		}else {
+			CurrencyModel.isRefreshed = true;
+		}
+		if (topActivity instanceof CurrencyDetailsActivity) {
+			CurrencyDetailsActivity currencyDetailsActivity = (CurrencyDetailsActivity) topActivity;
+			currencyDetailsActivity.attentionOver(isAttention, null);
+		}
+	}
 }

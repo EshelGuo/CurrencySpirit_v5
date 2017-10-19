@@ -8,16 +8,12 @@
         android:id="@+id/rl_title"
         android:layout_width="match_parent"
         android:layout_height="?android:attr/actionBarSize"
-        android:background="@android:color/white">
+        android:background="@color/titleColor">
         <TextView
             android:id="@+id/title"
             android:layout_centerInParent="true"
-            android:textSize="20sp"
-            android:textColor="#000"
-            android:textStyle="bold"
+            style="@style/TextTitle"
             android:gravity="center"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
             android:text="@string/item_information"/>
     </RelativeLayout>
 </LinearLayout>

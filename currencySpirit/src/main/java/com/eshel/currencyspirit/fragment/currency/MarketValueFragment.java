@@ -1,33 +1,9 @@
 package com.eshel.currencyspirit.fragment.currency;
 
-import android.os.Bundle;
-import android.support.annotation.Nullable;
-import android.support.v4.widget.SwipeRefreshLayout;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
-import android.view.View;
-import android.view.ViewGroup;
-import android.widget.TextView;
-
-import com.eshel.currencyspirit.CurrencySpiritApp;
-import com.eshel.currencyspirit.R;
-import com.eshel.currencyspirit.util.UIUtil;
-import com.eshel.currencyspirit.widget.RecycleViewDivider;
-import com.eshel.currencyspirit.widget.util.Config;
-import com.eshel.currencyspirit.widget.util.LoadMoreView;
 import com.eshel.model.CurrencyModel;
-import com.eshel.model.EssenceModel;
 import com.eshel.viewmodel.BaseViewModel;
 import com.eshel.viewmodel.CurrencyViewModel;
-import com.lhh.ptrrv.library.PullToRefreshRecyclerView;
 
-import java.util.ArrayList;
-
-import baseproject.base.BaseFragment;
-import baseproject.util.DensityUtil;
-import butterknife.BindView;
-import butterknife.ButterKnife;
 
 /**
  * createBy Eshel
@@ -35,30 +11,47 @@ import butterknife.ButterKnife;
  * desc: 市值
  */
 
-public class MarketValueFragment extends BaseFragment {
-
-	private PullToRefreshRecyclerView mRv_currency;
-	private MarketValueAdapter mMarketValueAdapter;
+public class MarketValueFragment extends CurrencyBaseFragment {
 
 	@Override
-	public void onCreate(@Nullable Bundle savedInstanceState) {
+	public void loadData(BaseViewModel.Mode mode) {
+		CurrencyViewModel.getMarketValueData(mode);
+	}
+
+	@Override
+	public CurrencyModel.BaseModel getBaseMode() {
+		return CurrencyModel.martetValueModel;
+	}
+
+	@Override
+	protected void refreshData() {
+		CurrencyViewModel.refreshMarketValueData();
+	}
+
+	{
+/*
+		private PullToRefreshRecyclerView mRv_currency;
+		private MarketValueAdapter mMarketValueAdapter;
+
+		@Override
+		public void onCreate(@Nullable Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		CurrencyViewModel.getMarketValueData(BaseViewModel.Mode.NORMAL);
 	}
 
-	@Nullable
-	@Override
-	public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+		@Nullable
+		@Override
+		public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
 		return super.onCreateView(inflater, container, savedInstanceState);
 	}
 
-	@Override
-	protected void reloadData() {
+		@Override
+		protected void reloadData() {
 		CurrencyViewModel.getMarketValueData(BaseViewModel.Mode.NORMAL);
 	}
 
-	@Override
-	public View getLoadSuccessView() {
+		@Override
+		public View getLoadSuccessView() {
 		View root = View.inflate(getActivity(), R.layout.view_currency_child, null);
 		mRv_currency = (PullToRefreshRecyclerView) root.findViewById(R.id.rv_currency);
 		mRv_currency.setSwipeEnable(true);//open swipe
@@ -91,7 +84,7 @@ public class MarketValueFragment extends BaseFragment {
 				CurrencySpiritApp.getApp().getHandler().postDelayed(new Runnable() {
 					@Override
 					public void run() {
-						CurrencyViewModel.refreshData();
+						CurrencyViewModel.refreshMarketValueData();
 						mRv_currency.setOnRefreshComplete();
 						mRv_currency.onFinishLoading(true, false);
 					}
@@ -102,8 +95,8 @@ public class MarketValueFragment extends BaseFragment {
 		return root;
 	}
 
-	@Override
-	public void notifyView() {
+		@Override
+		public void notifyView() {
 		if (CurrencyModel.MarketValueModel.loadDataCount < 20)
 			mRv_currency.onFinishLoading(false, false);
 		else
@@ -111,66 +104,67 @@ public class MarketValueFragment extends BaseFragment {
 		mMarketValueAdapter.notifyDataSetChanged();
 	}
 
-	public class MarketValueAdapter extends RecyclerView.Adapter<MarketValueFragment.MarketValueViewHolder> {
+		public class MarketValueAdapter extends RecyclerView.Adapter<MarketValueFragment.MarketValueViewHolder> {
 
-		@Override
-		public MarketValueFragment.MarketValueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-			return new MarketValueFragment.MarketValueViewHolder();
-		}
-
-		@Override
-		public void onBindViewHolder(MarketValueFragment.MarketValueViewHolder holder, int position) {
-			holder.bindDataToView(CurrencyModel.MarketValueModel.getMarketValueDataByPosition(position));
-		}
-
-		@Override
-		public int getItemCount() {
-			ArrayList<EssenceModel> essenceData = EssenceModel.essenceData;
-			if (essenceData != null)
-				return essenceData.size();
-			return 0;
-		}
-	}
-
-	public class MarketValueViewHolder extends RecyclerView.ViewHolder {
-
-		@BindView(R.id.tv_rank_chinesename)
-		TextView tvRankChinesename;
-		@BindView(R.id.tv_symbo)
-		TextView tvSymbo;
-		@BindView(R.id.tv_turnnumber)
-		TextView tvTurnnumber;
-		@BindView(R.id.tv_percent)
-		TextView tvPercent;
-		@BindView(R.id.tv_price)
-		TextView tvPrice;
-
-		public MarketValueViewHolder() {
-			super(View.inflate(getActivity(), R.layout.item_currency, null));
-			ButterKnife.bind(this,itemView);
-			itemView.setBackgroundResource(R.drawable.item_selector);
-			tvPercent.setWidth(UIUtil.getScreenWidth() / 5);
-		}
-
-		public void bindDataToView(CurrencyModel currencyModel) {
-			tvSymbo.setText(currencyModel.symbol);
-			tvRankChinesename.setText(String.format("#%d, %s",currencyModel.rank,currencyModel.chinesename));
-			tvTurnnumber.setText(CurrencyModel.moneyFormat(UIUtil.getString(R.string.market_value)+"$",currencyModel.turnnumber));
-			tvPrice.setText(CurrencyModel.moneyFormat("$",currencyModel.price));
-			String percent = new java.text.DecimalFormat("######0.00").format(currencyModel.percent);
-			if(!percent.contains("-")){
-				if(!percent.contains("+")){
-					percent = "+" + percent;
-				}
+			@Override
+			public MarketValueFragment.MarketValueViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
+				return new MarketValueFragment.MarketValueViewHolder();
 			}
-			tvPercent.setText(percent +"%");
-			tvPercent.setBackgroundResource(
-					currencyModel.percent < 0 ? R.drawable.drawable_percent_down : R.drawable.drawable_percent_up);
-			itemView.setOnClickListener(new View.OnClickListener() {
-				@Override
-				public void onClick(View v) {
-				}
-			});
+
+			@Override
+			public void onBindViewHolder(MarketValueFragment.MarketValueViewHolder holder, int position) {
+				holder.bindDataToView(CurrencyModel.MarketValueModel.getDataByPosition(position));
+			}
+
+			@Override
+			public int getItemCount() {
+				List<CurrencyModel> marketValueData = CurrencyModel.MarketValueModel.marketValueData;
+				if (marketValueData!= null)
+					return marketValueData.size();
+				return 0;
+			}
 		}
+
+		public class MarketValueViewHolder extends RecyclerView.ViewHolder {
+
+			@BindView(R.id.tv_rank_chinesename)
+			TextView tvRankChinesename;
+			@BindView(R.id.tv_symbo)
+			TextView tvSymbo;
+			@BindView(R.id.tv_turnnumber)
+			TextView tvTurnnumber;
+			@BindView(R.id.tv_percent)
+			TextView tvPercent;
+			@BindView(R.id.tv_price)
+			TextView tvPrice;
+
+			public MarketValueViewHolder() {
+				super(View.inflate(getActivity(), R.layout.item_currency, null));
+				ButterKnife.bind(this,itemView);
+				itemView.setBackgroundResource(R.drawable.item_selector);
+				tvPercent.setWidth(UIUtil.getScreenWidth() / 5);
+			}
+
+			public void bindDataToView(CurrencyModel currencyModel) {
+				tvSymbo.setText(currencyModel.symbol);
+				tvRankChinesename.setText(String.format("#%d, %s",currencyModel.rank,currencyModel.chinesename));
+				tvTurnnumber.setText(CurrencyModel.moneyFormat(UIUtil.getString(R.string.market_value)+"$",currencyModel.turnnumber));
+				tvPrice.setText(CurrencyModel.moneyFormat("$",currencyModel.price));
+				String percent = new java.text.DecimalFormat("######0.00").format(currencyModel.percent);
+				if(!percent.contains("-")){
+					if(!percent.contains("+")){
+						percent = "+" + percent;
+					}
+				}
+				tvPercent.setText(percent +"%");
+				tvPercent.setBackgroundResource(
+						currencyModel.percent < 0 ? R.drawable.drawable_percent_down : R.drawable.drawable_percent_up);
+				itemView.setOnClickListener(new View.OnClickListener() {
+					@Override
+					public void onClick(View v) {
+					}
+				});
+			}
+		}*/
 	}
 }

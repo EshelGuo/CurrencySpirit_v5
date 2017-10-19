@@ -6,11 +6,16 @@ package com.eshel.viewmodel;
  * desc: TODO
  */
 
-public class BaseViewModel {
+public abstract class BaseViewModel {
 	int start = 0;
 	int count = 20;
 	long refreshTime = 2000;
 
+	public abstract void getData( Mode mode);
+	public void refreshData(){
+		start = 0;
+		getData(Mode.REFRESH);
+	}
 	public enum Mode{
 		NORMAL,REFRESH,LOADMORE;
 	}
@@ -22,7 +27,7 @@ public class BaseViewModel {
 		start += count;
 		long refreshTime;
 		if(mode == Mode.REFRESH){
-			refreshTime = EssenceViewModel.refreshTime - BaseViewModel.getTimeDifference(ago);
+			refreshTime = this.refreshTime - BaseViewModel.getTimeDifference(ago);
 			if(refreshTime < 0)
 				refreshTime = 0;
 		}else {

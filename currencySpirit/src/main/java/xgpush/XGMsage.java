@@ -2,8 +2,10 @@ package xgpush;
 
 import android.content.Intent;
 
+import com.eshel.currencyspirit.activity.CurrencyDetailsActivity;
 import com.eshel.currencyspirit.activity.EssenceDetailsActivity;
 import com.eshel.currencyspirit.activity.WeiboDetailsActivity;
+import com.eshel.model.CurrencyModel;
 import com.eshel.model.EssenceModel;
 import com.eshel.model.InformationModel;
 
@@ -44,6 +46,17 @@ public class XGMsage {
 					intent.putExtra(EssenceDetailsActivity.key,essenceModel);
 					break;
 				case "COIN":
+					intent = new Intent(baseActivity, CurrencyDetailsActivity.class);
+					CurrencyModel currencyModel = new CurrencyModel();
+					currencyModel.infoBean.imageurl = json.optString("image");
+					currencyModel.englishname = json.optString("englishname");
+					currencyModel.infoBean.englishname = json.optString("englishname");
+					currencyModel.chinesename =  msg.title;
+					currencyModel.infoBean.chinesename =  msg.title;
+					currencyModel.rank = json.optInt("rank");
+					currencyModel.platform = json.optString("platform");
+					currencyModel.url = json.optString("url");
+					intent.putExtra(CurrencyDetailsActivity.key,currencyModel);
 					break;
 				case "WEIBO":
 					intent = new Intent(baseActivity, WeiboDetailsActivity.class);

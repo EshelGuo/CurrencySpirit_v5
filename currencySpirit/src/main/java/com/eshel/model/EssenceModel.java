@@ -1,5 +1,6 @@
 package com.eshel.model;
 
+import com.eshel.currencyspirit.CurrencySpiritApp;
 import com.eshel.currencyspirit.activity.EssenceHistoryActivity;
 import com.eshel.currencyspirit.factory.FragmentFactory;
 import com.eshel.currencyspirit.fragment.EssenceFragment;
@@ -59,29 +60,48 @@ public class EssenceModel implements Serializable{
 		}
 		return transitionData;
 	}
-	public static void notifyView(Mode mode , boolean isSuccess){
-		BaseFragment essenceFragment = (BaseFragment) FragmentFactory.getFragment(EssenceFragment.class);
-		if(isSuccess) {
-			if (essenceFragment.getCurrState() != BaseFragment.LoadState.StateLoadSuccess)
-				essenceFragment.changeState(BaseFragment.LoadState.StateLoadSuccess);
-			else {
-				essenceFragment.notifyView();
-			}
-		}else {
-			if(mode == Mode.NORMAL)
-				essenceFragment.changeState(BaseFragment.LoadState.StateLoadFailed);
-			else if(mode == Mode.REFRESH){
-				essenceFragment.refreshFailed();
-			}else {
-				essenceFragment.loadModeFailed();
-			}
+	public static void notifyView(final Mode mode , final boolean isSuccess){
+		CurrencySpiritApp.getApp().getHandler().post(new Runnable() {
+			@Override
+			public void run() {
+				BaseFragment essenceFragment = (BaseFragment) FragmentFactory.getFragment(EssenceFragment.class);
+				if(isSuccess) {
+					if (essenceFragment.getCurrState() != BaseFragment.LoadState.StateLoadSuccess)
+						essenceFragment.changeState(BaseFragment.LoadState.StateLoadSuccess);
+					else {
+						essenceFragment.notifyView();
+					}
+				}else {
+					if(mode == Mode.NORMAL)
+						essenceFragment.changeState(BaseFragment.LoadState.StateLoadFailed);
+					else if(mode == Mode.REFRESH){
+						essenceFragment.refreshFailed();
+					}else {
+						essenceFragment.loadModeFailed();
+					}
 
-		}
+				}
+			}
+		});
 	}
 	public static void notifyHistoryActivity(){
 		EssenceHistoryActivity activity = (EssenceHistoryActivity) BaseActivity.getActivity(EssenceHistoryActivity.class);
 		if(activity != null){
 			activity.notifyView();
 		}
+	}
+
+	@Override
+	public String toString() {
+		return "News{" +
+				"new_type=" + new_type +
+				", title='" + title + '\'' +
+				", update_time=" + update_time +
+				", abstracts='" + abstracts + '\'' +
+				", url='" + url + '\'' +
+				", imageurl='" + imageurl + '\'' +
+				", webicon='" + webicon + '\'' +
+				", webname='" + webname + '\'' +
+				'}';
 	}
 }

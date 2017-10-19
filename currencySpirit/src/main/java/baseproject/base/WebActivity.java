@@ -47,16 +47,10 @@ public abstract class WebActivity extends BaseActivity {
 		ButterKnife.bind(this);
 		mTitle.addView(initTitleView(),
 				new LinearLayout.LayoutParams(LinearLayout.LayoutParams.MATCH_PARENT, LinearLayout.LayoutParams.WRAP_CONTENT));
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			mTitle.setElevation(DensityUtil.dp2px(HomeActivity.titleElevation/2));
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-			UIUtil.debugToast("elevation: "+mTitle.getElevation());
-		}
 		mProgressBar.setProgress(0);
 		initWebView();
 	}
-
+	private boolean loadFailed;
 	private void initWebView() {
 		WebSettings settings = mWvEssence.getSettings();
 //		settings.setDefaultFontSize();
@@ -75,6 +69,7 @@ public abstract class WebActivity extends BaseActivity {
 			@Override
 			public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
 				view.loadUrl("file:///android_asset/currency/offline.html");
+				loadFailed = true;
 				super.onReceivedError(view, errorCode, description, failingUrl);
 			}
 		});
@@ -116,6 +111,8 @@ public abstract class WebActivity extends BaseActivity {
 	@Override
 	public boolean onKeyDown(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
+			if(loadFailed)
+				return super.onKeyDown(keyCode, event);
 			if (mWvEssence.canGoBack()) {
 				mWvEssence.goBack();//返回上一页面
 				return true;
@@ -147,6 +144,7 @@ public abstract class WebActivity extends BaseActivity {
 		@JavascriptInterface
 		public void reLoad() {
 			UIUtil.debugToast("reload");
+			loadFailed = false;
 			if (webActivity instanceof WebActivity) {
 				final WebActivity activity = (WebActivity) webActivity;
 				if (ThreadUtil.isMainThread())
