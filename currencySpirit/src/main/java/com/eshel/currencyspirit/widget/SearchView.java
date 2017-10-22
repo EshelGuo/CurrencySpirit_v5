@@ -1,12 +1,14 @@
 package com.eshel.currencyspirit.widget;
 
 import android.content.Context;
+import android.content.res.TypedArray;
 import android.graphics.drawable.Drawable;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.util.AttributeSet;
 import android.view.MotionEvent;
-import android.widget.EditText;
+
+import com.eshel.currencyspirit.R;
 
 /**
  * createBy Eshel
@@ -14,7 +16,7 @@ import android.widget.EditText;
  * desc: TODO
  */
 
-public class SearchView extends EditText {
+public class SearchView extends android.support.v7.widget.AppCompatEditText {
 
 	// 构造方法
 	public SearchView(Context context) {
@@ -27,6 +29,14 @@ public class SearchView extends EditText {
 
 	public SearchView(Context context, AttributeSet attrs, int defStyleAttr) {
 		super(context, attrs, defStyleAttr);
+		TypedArray ta = context.obtainStyledAttributes(attrs, R.styleable.SearchView);
+		int searchIcon = ta.getResourceId(R.styleable.SearchView_search_icon, -1);
+		int cleanIcon = ta.getResourceId(R.styleable.SearchView_clean_icon, -1);
+		if (searchIcon != -1)
+			setSearchIcon(searchIcon);
+		if (cleanIcon != -1)
+			setCleanIcon(cleanIcon);
+		setCleanIcon(-1);
 		init();
 	}
 	TextWatcher mTextWatcher = new TextWatcher() {
@@ -42,12 +52,24 @@ public class SearchView extends EditText {
 
 		@Override
 		public void afterTextChanged(Editable s) {
-
+			if(getText().length() != 0){
+				if(cleanIcon != null)
+					setCompoundDrawables(searchIcon,null,cleanIcon,null);
+			}else {
+				setCompoundDrawables(searchIcon,null,null,null);
+			}
 		}
 	};
 
 	private void init() {
 		addTextChangedListener(mTextWatcher);
+		setOnDrawableRightListener(new OnDrawableRightListener() {
+			@Override
+			public void onDrawableRightClick() {
+				setText("");
+			}
+		});
+		getFocus();
 	}
 
 	// 触摸事件
@@ -77,7 +99,13 @@ public class SearchView extends EditText {
 				}
 			}
 		}
+		getFocus();
 		return super.onTouchEvent(event);
+	}
+	public void getFocus(){
+		setFocusable(true);
+		setFocusableInTouchMode(true);
+		requestFocus();
 	}
 
 	// 定义一个DrawableLeft点击事件接口
@@ -100,5 +128,25 @@ public class SearchView extends EditText {
 
 	public void setOnDrawableRightListener(OnDrawableRightListener onDrawableRightListener) {
 		this.onDrawableRightListener = onDrawableRightListener;
+	}
+	Drawable searchIcon;
+	Drawable cleanIcon;
+	public void setSearchIcon(int resId){
+		Drawable drawable = null;
+		if(resId != -1) {
+			drawable = getResources().getDrawable(resId);
+			drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+			searchIcon = drawable;
+		}
+		setCompoundDrawables(drawable,null,cleanIcon,null);
+	}
+	public void setCleanIcon(int resId){
+		Drawable drawable = null;
+		if(resId != -1) {
+			drawable = getResources().getDrawable(resId);
+			drawable.setBounds(0, 0, drawable.getMinimumWidth(), drawable.getMinimumHeight());
+			cleanIcon = drawable;
+		}
+		setCompoundDrawables(searchIcon,null,drawable,null);
 	}
 }
